@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+
+from sys import argv
+from math import *
+
+def derivative_qe(x):
+    a4 = int(argv[6])
+    a3 = int(argv[5])
+    a2 = int(argv[4])
+    a1 = int(argv[3])
+
+    df = (4 * a4 * x**3) + (3 * a3 * x**2) + (2 * a2 * x) + a1
+    return df
+
+def quadratic_ecuation(x):
+    a4 = int(argv[6])
+    a3 = int(argv[5])
+    a2 = int(argv[4])
+    a1 = int(argv[3])
+    a0 = int(argv[2])
+
+    f = (a4 * x**4) + (a3 * x**3) + (a2 * x**2) + (a1 * x) + a0
+    return f
+
+def midpoint(a, b):
+    mid = float(0)
+    mid = (a + b)/2
+    return mid
+
+def bisection():
+    a = float(1)
+    b = float(0)
+    c = float(midpoint(a, b))
+    n = int(argv[7])
+    rep = int(0)
+
+    if n < 0:
+        print("Error")
+        exit(84)
+    if abs(quadratic_ecuation(c)) <= 10**(-n):
+        print("x =", round(c, n))
+    while abs(quadratic_ecuation(c)) > 10**(-n) and rep < 150:
+        c = midpoint(a, b)
+        if (quadratic_ecuation(a) * quadratic_ecuation(c)) < 0:
+            b = c
+        else:
+            a = c
+        rep += 1
+        print("x =", round(c, n))
+
+
+def newton():
+    n = int(argv[7])
+    x = float(0.5)
+    rep = int(0)
+
+    if n < 0:
+        print("Error")
+        exit(84)
+    if abs(quadratic_ecuation(x)) <= 10**(-n):
+        print("x =", round(x, n))
+    while abs(quadratic_ecuation(x)) > 10**(-n) and rep < 150:
+        if derivative_qe(x) != 0:
+            print("x =", round(x, n))
+            x = x - (quadratic_ecuation(x)/derivative_qe(x))
+            rep += 1
+        else:
+            exit(84)
+    print("x =", round(x, n))
+
+def secant():
+    a = float(1)
+    b = float(0)
+    c = float(a - (quadratic_ecuation(a) * (a - b)/(quadratic_ecuation(a) - quadratic_ecuation(b))))
+    n = int(argv[7])
+    rep = int(0)
+
+    if n < 0:
+        print("Error")
+        exit(84)
+    if abs(quadratic_ecuation(c)) <= 10**(-n):
+        print("x =", round(c, n))
+    while abs(quadratic_ecuation(c)) > 10**(-n) and rep < 150:
+        c = a - (quadratic_ecuation(a) * (a - b)/(quadratic_ecuation(a) - quadratic_ecuation(b)))
+        b = a
+        a = c
+        rep += 1
+        print("x =", round(c, n))
+
+def help():
+    print("USAGE")
+    print("\t./105torus opt a0 a1 a2 a3 a4 n\n")
+    print("DESCRIPTION")
+    print("\topt\tmethod option:")
+    print("\t\t    1 for the bisection method")
+    print("\t\t    2 for Newton’s method")
+    print("\t\t    3 for the secant method")
+    print("\ta[0-4]\tcoefficients of the equation")
+    print("\tn\tprecision (the application of the polynomial to the solution should be smaller than 10ˆ-n)")
+
+def main():
+    try:
+        if len(argv) == 8 and argv[1] < '4' and argv[1] > '0':
+            if argv[1] == '1':
+                bisection()
+            if argv[1] == '2':
+                newton()
+            if argv[1] == '3':
+                secant()
+        elif len(argv) == 2 and argv[1] == '-h':
+            help()
+        else:
+            raise Exception
+    except Exception:
+        print ("Error")
+        exit (84)
+
+if __name__ == "__main__":
+    main()

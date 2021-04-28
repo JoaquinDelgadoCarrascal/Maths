@@ -1,0 +1,105 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(".")
+
+class Fibonacci
+
+    def is_numeric?(obj)
+        obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
+    end
+
+    def is_int?(obj)
+        !!(obj =~ /\A[-+]?[0-9]+\z/)
+    end
+
+    def help_usage(usage)
+        if ARGV.length == 1 && ARGV[0].eql?("-h")
+            print usage
+            exit 0
+        else
+            bombyx_formula()
+        end
+    end
+
+    def bombyx_formula()
+        if ((ARGV.length == 2 && (is_numeric? ARGV[0]) == true && (is_numeric? ARGV[1]) == true)) ||
+            (ARGV.length == 3 && (is_numeric? ARGV[0]) == true && (is_numeric? ARGV[1]) == true && (is_numeric? ARGV[2]) == true)
+            n = ARGV[0].to_f
+            if n < 0
+                exit 84
+            end
+            if ARGV.length == 2
+                k = ARGV[1].to_f
+                if k > 4.00 || k < 1.00
+                    exit 84
+                end
+                x1 = n
+                i = 1
+                print(i, ' ', "%.2f" % n, "\n")
+                i += 1
+                while i == 2
+                    result = k * x1 * ((1000 - x1)/1000)
+                    print(i, ' ', "%.2f" % result, "\n")
+                    i += 1
+                end
+                while i <= 100
+                    xi = result
+                    result = k * xi * ((1000 - xi)/1000)
+                    print(i, ' ', "%.2f" % result, "\n")
+                    i += 1
+                end
+            end
+            if ARGV.length == 3
+                i0 = ARGV[1]
+                i1 = ARGV[2]
+                if ((is_int? i0) == false) || ((is_int? i1) == false)
+                    exit 84
+                else
+                    i0 = ARGV[1].to_i
+                    i1 = ARGV[2].to_i
+                end
+                if i0 >= i1 || i0 < 0 || i1 < 0
+                    exit 84
+                end
+                i = 1
+                k = 1
+                temp = n
+                while k <= 4
+                    n = temp
+                    while i < i0
+                        n = k * n * ((1000 - n)/1000)
+                        i += 1
+                    end
+                    while i <= i1
+                        if n > 0
+                            print("%.2f" % k, ' ', "%.2f" % n, "\n")
+                        else
+                            print("%.2f" % k, ' ', "0.00\n")
+                        end
+                        n = k * n * ((1000 - n)/1000)
+                        i += 1
+                    end
+                    k += 0.01
+                    i = 1
+                end
+            end
+            exit 0
+        else
+            print("Error: try -h to see the USAGE\n")
+            exit 84
+        end
+    end
+end
+
+usage = "USAGE
+    ./106bombyx n [k | i0 i1]\n
+DESCRIPTION
+    n\tnumber of first generation individuals
+    k\tgrowth rate from 1 to 4
+    i0\tinitial generation (included)
+    i1\tfinal generation (included)\n"
+
+Fibonaccii = Fibonacci.new
+Fibonaccii.help_usage(usage)
+Fibonaccii.bombyx_formula()
+exit 0

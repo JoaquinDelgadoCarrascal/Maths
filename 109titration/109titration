@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+
+from sys import argv
+from math import *
+import logging
+
+def second_derivative_estimated(name, mililiters, n, file_split):
+    print("\nSecond derivative estimated:")
+    # for i in range(len(file_split[n - 2][0]), len(file_split[n]), len(file_split[n + 2][0])):
+    #     print(file_split[n])
+
+def second_derivative(name, mililiters, result_list, file_split, n):
+    for j in range(2, len(file_split) - 2):
+        xa = float(file_split[j - 1][0])
+        xb = float(file_split[j][0])
+        xc = float(file_split[j + 1][0])
+        ya = float(result_list[j - 2])
+        yb = float(result_list[j - 1])
+        yc = float(result_list[j])
+        h2 = float(xb - xa)
+        h1 = float(xc - xb)
+        bw = float((yb - ya) / h2)
+        fw = float((yc - yb) / h1)
+        result = float(((h2 * fw) + (h1 * bw)) / (h1 + h2))
+        print('%.1f' %float(file_split[j][0]) + " ml -> " + '%.2f' %result)
+    second_derivative_estimated(name, mililiters, n, file_split)
+
+def first_derivative(name, file_split):
+    result_list = []
+    mililiters = 0
+    max_num = 0
+    print("Derivative:")
+    for j in range(1, len(file_split) - 1):
+        xa = float(file_split[j - 1][0])
+        xb = float(file_split[j][0])
+        xc = float(file_split[j + 1][0])
+        ya = float(file_split[j - 1][1])
+        yb = float(file_split[j][1])
+        yc = float(file_split[j + 1][1])
+        h2 = float(xb - xa)
+        h1 = float(xc - xb)
+        bw = float((yb - ya) / h2)
+        fw = float((yc - yb) / h1)
+        result = float(((h2 * fw) + (h1 * bw)) / (h1 + h2))
+        if result > max_num:
+            max_num = result
+            mililiters = file_split[j][0]
+            n = j
+        result_list.append(result)
+        print('%.1f' %float(file_split[j][0]) + " ml -> " + '%.2f' %result)
+    print("\nEquivalence point at " + '%.1f' %float(mililiters) + " ml\n")
+    second_derivative(name, mililiters, result_list, file_split, n)
+
+def call_functions(name):
+    file_split = []
+    for i in range(len(name)):
+        file_split.append(name[i].split(';'))
+    first_derivative(name, file_split)
+
+def open_file(name):
+    file = open(name,'r')
+    content = file.read()
+    file.close()
+    return content.split('\n')
+
+def file_checker(name):
+    file_split = []
+    for i in range(len(name)):
+        file_split = name[i].split(';')
+        if len(file_split) > 2:
+            print("Error: Invalid file")
+            exit (84)
+        for j in range(len(file_split)):
+            try:
+                float(file_split[j])
+            except:
+                print("Error: Invalid file")
+                exit (84)
+
+def help():
+    print("USAGE")
+    print("\t./109titration file\n")
+    print("DESCRIPTION")
+    print("\tfile\ta csv file containing \"vol;ph\" lines")
+
+def main():
+    #try:
+        if len(argv) == 2:
+            if argv[1] == '-h':
+                help()
+            else:
+                numbers = open_file(argv[1])
+                error = file_checker(numbers)
+                call_functions(numbers)
+    #     else:
+    #         raise Exception
+    # except Exception:
+    #     print ("Error")
+    #     exit (84)
+
+if __name__ == "__main__":
+    main()

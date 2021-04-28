@@ -1,0 +1,106 @@
+#!/usr/bin/env python3
+
+from sys import argv
+from math import *
+
+def translation_matrice(o, first, second, last):
+    x = float(argv[1])
+    y = float(argv[2])
+    i = float(argv[o + 1])
+    j = float(argv[o + 2])
+
+    print("Translation along vector", '(' + '%.0f' %i + ', ' + '%.0f' %j + ')')
+    if (last == 1):
+        print("1.00\t", "0.00\t", '%.2f' %i)
+        print("0.00\t", "1.00\t", '%.2f' %j)
+        print("0.00\t", "0.00\t", "1.00")
+        print('(' + '%.2f' %first + ', ' + '%.2f' %second + ') => (' + '%.2f' %(x+i) + ', ' + '%.2f' %(y+j) + ')')
+    return x+i, y+j
+
+def scaling_matrice(o, first, second, last):
+    x = float(argv[1])
+    y = float(argv[2])
+    m = float(argv[o + 1])
+    n = float(argv[o + 2])
+
+    print("Scaling by factors", '%.0f' %m + " and " + '%.0f' %n)
+    if (last == 1):
+        print('%.2f' %m + '\t', "0.00\t", "0.00")
+        print("0.00\t", '%.2f' %n + '\t', "0.00")
+        print("0.00\t", "0.00\t", "1.00")
+        print('(' + '%.2f' %first + ', ' + '%.2f' %second + ') => (' + '%.2f' %(x*m) + ', ' + '%.2f' %(y*n) + ')')
+    return x*m, y*n
+
+def rotation_matrice(o, first, second, last):
+    x = float(argv[1])
+    y = float(argv[2])
+    angle = float(argv[o + 1])
+
+    cosdecimal = cos(angle * pi / 180)
+    sindecimal = sin(angle * pi / 180)
+
+    print("Rotation by a", '%.0f' %angle + ' and degree angle')
+    if (last == 1):
+        print('%.2f' %(cosdecimal) + '\t', '%.2f' %(-sindecimal) + '\t', "0.00")
+        print('%.2f' %(sindecimal) + '\t', '%.2f' %(cosdecimal) + '\t', "0.00")
+        print("0.00\t", "0.00\t", "1.00")
+        print('(' + '%.2f' %first + ', ' + '%.2f' %second + ') => (' + '%.2f' %(cosdecimal*x-sindecimal*y) + ', ' + '%.2f' %(sindecimal*x+cosdecimal*y) + ')')
+    return cosdecimal*x-sindecimal*y, sindecimal*x+cosdecimal*y
+
+def reflexion_matrice(o, first, second, last):
+    x = float(argv[1])
+    y = float(argv[2])
+    angle = float(argv[o + 1])
+
+    cosdecimal2 = cos((angle * 2) * pi / 180)
+    sindecimal2 = sin((angle * 2) * pi / 180)
+
+    print("Reflection over an axis with an inclination angle of", '%.0f' %angle + ' ' + "degrees")
+    if (last == 1):
+        print('%.2f' %(cosdecimal2) + '\t', '%.2f' %(sindecimal2) + '\t', "0.00")
+        print('%.2f' %(sindecimal2) + '\t', '%.2f' %(-cosdecimal2) + '\t', "0.00")
+        print("0.00\t", "0.00\t", "1.00")
+        print('(' + '%.2f' %first + ', ' + '%.2f' %second + ') => (' + '%.2f' %(cosdecimal2*x+sindecimal2*y) + ', ' + '%.2f' %(sindecimal2*x-cosdecimal2*y) + ')')
+    return cosdecimal2*x+sindecimal2*y, sindecimal2*x-cosdecimal2*y
+
+def help():
+    print("USAGE")
+    print("\t./102architect x y transfo1 arg11 [arg12] [transfo2 arg12 [arg22]] ...\n")
+    print("DESCRIPION")
+    print("\tx abscissa of the original point")
+    print("\ty ordinate of the original point\n")
+    print("\ttransfo arg1 [arg2]")
+    print("\t-t i j translation along vector (i, j)")
+    print("\t-z m n scaling by factors m (x-axis) and n (y-axis)")
+    print("\t-r d rotation centered in O by a d degree angle")
+    print("\t-s d reflection over the axis passing through O with an inclination angle of d degrees")
+
+def main():
+    i = 3
+    try:
+        if len(argv) == 2 and argv[1] == '-h':
+            help()
+        elif len(argv) > 3:
+            first = float(argv[1])
+            second = float(argv[2])
+            while (i < len(argv)):
+                if argv[i] == '-t':
+                    argv[1], argv[2] = translation_matrice(i, first, second, 1 if i > len(argv) - 4 else 0)
+                    i += 3
+                elif argv[i] == '-z':
+                    argv[1], argv[2] = scaling_matrice(i, first, second, 1 if i > len(argv) - 4 else 0)
+                    i += 3
+                elif argv[i] == '-r':
+                    argv[1], argv[2] = rotation_matrice(i, first, second, 1 if i > len(argv) - 4 else 0)
+                    i += 2
+                elif argv[i] == '-s':
+                    argv[1], argv[2] = reflexion_matrice(i, first, second, 1 if i > len(argv) - 4 else 0)
+                    i += 2
+                else:
+                    raise Exception
+        else:
+            raise Exception
+    except Exception:
+        print ("Error")
+        exit (84)
+main()

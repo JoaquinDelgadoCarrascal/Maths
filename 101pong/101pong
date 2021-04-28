@@ -1,0 +1,120 @@
+#!/usr/bin/env python3
+
+from sys import argv
+import math
+
+def sub_vectors(argv):
+    a = [float(argv[1]), float(argv[2]), float(argv[3])]
+    b = [float(argv[4]), float(argv[5]) ,float(argv[6])]
+
+    b[0] = b[0] - a[0]
+    b[1] = b[1] - a[1]
+    b[2] = b[2] - a[2]
+
+    return (b)
+
+def velocity_vector(argv):
+    if len(argv) < 7:
+        exit (84)
+    xa = float(argv[1])
+    ya = float(argv[2])
+    za = float(argv[3])
+    xb = float(argv[4])
+    yb = float(argv[5])
+    zb = float(argv[6])
+
+    xb = xb - xa
+    yb = yb - ya
+    zb = zb - za
+        
+    print("The velocity vector of the ball is:")
+    print('(' + '%.2f' %xb + ', ' + '%.2f' %yb + ', ' + '%.2f' %zb + ')')
+
+def position_at_time_n(argv):
+    if len(argv) < 7:
+        exit (84)
+    t = int(argv[7])
+    xb = float(argv[4])
+    yb = float(argv[5])
+    zb = float(argv[6])
+
+    w = sub_vectors(argv)
+    p = [(w[0]*t+xb), (w[1]*t+yb), (w[2]*t+zb)]
+    
+    print ("At time t + " + str(t) +", ball coordinates will be:")
+    print('(' + '%.2f' %p[0] + ', ' + '%.2f' %p[1] + ', ' + '%.2f' %p[2] + ')')
+
+def do_norm_vector(b):
+    if len(argv) < 7:
+        exit (84)
+    x = float(b[0])
+    y = float(b[1])
+    z = float(b[2])
+
+    result = math.sqrt(x**2 + y**2 + z**2)
+
+    return (result)
+
+def incidence_angle(argv):
+    if len(argv) < 7:
+        exit (84)
+    z0 = float(argv[3])
+    z1 = float(argv[6])
+    norm_vector = do_norm_vector(sub_vectors(argv))
+
+    if norm_vector == 0:
+        print("This two vectors are the same, couldn't work for this case.")
+        exit (84)
+
+    angle_in_rad = math.fabs(math.asin((z1 - z0) / norm_vector))
+    angle = float(math.degrees(angle_in_rad))
+
+    if angle == 0 or angle == 90:
+        print("The ball won't reach the paddle.")
+        exit (0)
+    if (z1 - z0) >= 0:
+        if z1 > 0:
+            print("The ball won't reach the paddle.")
+        else:
+            print("The incidence angle is:")
+            print('%.2f' %angle + " degrees")
+    if (z1 - z0) < 0:
+    	if z1 < 0:
+    		print("The ball won't reach the paddle.")
+    	else:
+    		print("The incidence angle is:")
+    		print('%.2f' %angle + " degrees")
+def help():
+    print("USAGE")
+    print("\t./101pong x0 y0 z0 x1 y1 z1 n")
+    print("DESCRIPION")
+    print("\tx0 ball abscissa at time t - 1")
+    print("\ty0 ball ordinate at time t - 1")
+    print("\tz0 ball altitude at time t - 1")
+    print("\tx1 ball abscissa at time t")
+    print("\ty1 ball ordinate at time t")
+    print("\tz1 ball altitude at time t")
+    print("\tn time shift (greater than or equal to zero, integer)")
+
+def main():
+    if len(argv) > 8:
+        print ("Too many arguments, try with -h for help")
+        exit (84)
+    elif len(argv) == 1:
+        print ("Too few arguments, try with -h for help")
+        exit (84)
+    elif len(argv) == 2 and argv[1] == "-h":
+        help()
+        exit (0)
+    try:
+        t = int(argv[7])
+        if t < 0:
+            raise Exception
+        velocity_vector(argv)
+        position_at_time_n(argv)
+        incidence_angle(argv)
+    except Exception:
+        print("error")
+        exit (84)
+    exit (0)
+main()
